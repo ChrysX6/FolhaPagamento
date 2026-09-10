@@ -38,10 +38,10 @@ function sheetName(monthKey, control){
 // ---------- INIT ----------
 document.addEventListener("DOMContentLoaded", async () => {
   const startKey = monthKey(START_MONTH.year, START_MONTH.month);
-  state.months = loadMonthsLocal();
+  state.months = await loadMonthsRemote();
   if(!state.months.includes(startKey)){
     state.months.unshift(startKey);
-    saveMonthsLocal();
+    await apiPost("addMonth", { month: startKey });
   }
   state.currentMonth = state.months[state.months.length-1];
   renderMonths();
@@ -50,12 +50,16 @@ document.addEventListener("DOMContentLoaded", async () => {
   await loadTable();
 });
 
-function loadMonthsLocal(){
-  const saved = localStorage.getItem("dp_months");
-  return saved ? JSON.parse(saved) : [];
-}
-function saveMonthsLocal(){
-  localStorage.setItem("dp_months", JSON.stringify(state.months));
+// A lista de meses agora fica salva numa aba de controle na própria planilha
+// (via apiGet("getMonths")), para aparecer igual para todos os usuários.
+async function loadMonthsRemote(){
+  try{
+    const data = await apiGet("getMonths");
+    return (data.months && data.months.length) ? data.months : [];
+  }catch(err){
+    console.error(err);
+    return [];
+  }
 }
 
 // ---------- RENDER MESES (com botão de excluir) ----------
@@ -111,8 +115,8 @@ async function excluirMes(mk){
       controls: Object.values(CONTROLS)
     });
 
+    // O backend (deleteMonth) já remove o mês da lista compartilhada na planilha
     state.months = state.months.filter(m => m !== mk);
-    saveMonthsLocal();
 
     if(state.currentMonth === mk){
       state.currentMonth = state.months[state.months.length-1];
@@ -496,13 +500,16 @@ async function createNextMonth(){
 
   showLoading(true);
   try{
+    // Registra o mês na aba de controle compartilhada — é isso que faz
+    // ele aparecer para todos os usuários, não só para quem criou.
+    await apiPost("addMonth", { month: newKey });
+
     for(const control of Object.values(CONTROLS)){
       const baseSheet = sheetName(last, control);
       const newSheet = sheetName(newKey, control);
       await apiPost("createMonthSheet", { baseSheet, newSheet });
     }
     state.months.push(newKey);
-    saveMonthsLocal();
     state.currentMonth = newKey;
     renderMonths();
     await loadTable();
