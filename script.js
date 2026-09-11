@@ -55,7 +55,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 async function loadMonthsRemote(){
   try{
     const data = await apiGet("getMonths");
-    return (data.months && data.months.length) ? data.months : [];
+    const meses = (data.months && data.months.length) ? data.months : [];
+    return [...new Set(meses)]; // segurança extra contra duplicados
   }catch(err){
     console.error(err);
     return [];
