@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Controle de Folha de Pagamento - Águia Contab</title>
+<style>
+  :root{
+    --azul-escuro:#0b2545;
+    --azul:#134074;
+    --azul-claro:#1b6ca8;
+    --verde:#1fa25c;
+    --vermelho:#d9463b;
+    --cinza-bg:#f2f5f9;
+    --cinza-borda:#dfe6ee;
+    --texto:#1c2b3a;
+    --branco:#ffffff;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:'Segoe UI', Arial, sans-serif;
+    background:var(--cinza-bg);
+    color:var(--texto);
+  }
+  header{
+    background:linear-gradient(90deg,var(--azul-escuro),var(--azul));
+    color:#fff;
+    padding:14px 28px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    gap:14px;
+    box-shadow:0 2px 10px rgba(0,0,0,.15);
+    position:sticky;
+    top:0;
+    z-index:50;
+  }
+  .brand{
+    display:flex;
+    align-items:center;
+    gap:14px;
+  }
+  .brand img{
+    height:46px;
+    border-radius:8px;
+    background:#fff;
+    padding:3px;
+  }
+  .brand h1{
+    font-size:18px;
+    margin:0;
+    font-weight:600;
+    line-height:1.2;
+  }
+  .brand span{
+    font-size:12px;
+    opacity:.85;
+  }
+  .header-actions{
+    display:flex;
+    gap:10px;
+    align-items:center;
+    flex-wrap:wrap;
+  }
+  select, input[type=text], input[type=month], textarea{
+    padding:9px 12px;
+    border-radius:8px;
+    border:1px solid var(--cinza-borda);
+    font-size:14px;
+    outline:none;
+  }
+  header select, header input{
+    border:none;
+  }
+  .btn{
+    border:none;
+    padding:10px 16px;
+    border-radius:8px;
+    font-size:14px;
+    font-weight:600;
+    cursor:pointer;
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    transition:.15s;
+  }
+  .btn-primary{background:var(--azul-claro); color:#fff;}
+  .btn-primary:hover{background:#155f8c;}
+  .btn-success{background:var(--verde); color:#fff;}
+  .btn-success:hover{background:#188a4c;}
+  .btn-danger{background:var(--vermelho); color:#fff;}
+  .btn-danger:hover{background:#b8382e;}
+  .btn-outline{background:#fff; color:var(--azul); border:1px solid var(--cinza-borda);}
+  .btn-outline:hover{background:var(--cinza-bg);}
+  main{padding:24px 28px 60px;}
+
+  .cards{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+    gap:14px;
+    margin-bottom:22px;
+  }
+  .card{
+    background:var(--branco);
+    border:1px solid var(--cinza-borda);
+    border-radius:12px;
+    padding:14px 16px;
+    box-shadow:0 1px 3px rgba(0,0,0,.04);
+  }
+  .card .num{font-size:24px; font-weight:700; color:var(--azul-escuro);}
+  .card .label{font-size:12px; color:#5b6b7c; margin-top:4px;}
+
+  .toolbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:12px;
+    margin-bottom:16px;
+  }
+  .toolbar-left{display:flex; gap:10px; flex-wrap:wrap; align-items:center;}
+
+  .table-wrap{
+    background:var(--branco);
+    border-radius:12px;
+    border:1px solid var(--cinza-borda);
+    overflow:auto;
+    box-shadow:0 1px 4px rgba(0,0,0,.04);
+  }
+  table{border-collapse:collapse; width:100%; min-width:1400px; font-size:13.5px;}
+  thead th{
+    background:var(--azul-escuro);
+    color:#fff;
+    text-align:left;
+    padding:11px 10px;
+    position:sticky;
+    top:0;
+    white-space:nowrap;
+    font-weight:600;
+  }
+  tbody td{
+    padding:9px 10px;
+    border-bottom:1px solid var(--cinza-borda);
+    white-space:nowrap;
+  }
+  tbody tr:hover{background:#f7fafd;}
+  .badge{
+    display:inline-flex;
+    align-items:center;
+    gap:4px;
+    padding:5px 11px;
+    border-radius:20px;
+    font-size:12.5px;
+    font-weight:700;
+    cursor:pointer;
+    border:none;
+    user-select:none;
+  }
+  .badge.sim{background:#e3f8ea; color:var(--verde);}
+  .badge.nao{background:#fbe8e6; color:var(--vermelho);}
+  .actions-col{display:flex; gap:6px;}
+  .icon-btn{
+    border:none;
+    background:#eef3f8;
+    color:var(--azul);
+    width:30px; height:30px;
+    border-radius:7px;
+    cursor:pointer;
+    font-size:14px;
+  }
+  .icon-btn.del{color:var(--vermelho);}
+  .icon-btn:hover{filter:brightness(0.95);}
+
+  .empty{
+    text-align:center;
+    padding:50px 20px;
+    color:#8492a3;
+  }
+
+  /* Modal */
+  .modal-overlay{
+    position:fixed; inset:0; background:rgba(11,37,69,.55);
+    display:none; align-items:center; justify-content:center;
+    z-index:200; padding:20px;
+  }
+  .modal-overlay.active{display:flex;}
+  .modal{
+    background:#fff; border-radius:14px; max-width:640px; width:100%;
+    max-height:90vh; overflow:auto; padding:26px 28px;
+    box-shadow:0 10px 40px rgba(0,0,0,.25);
+  }
+  .modal h2{margin-top:0; color:var(--azul-escuro); font-size:19px;}
+  .form-grid{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:16px;}
+  .form-grid .full{grid-column:1/-1;}
+  .form-group label{display:block; font-size:12.5px; font-weight:600; margin-bottom:5px; color:#41556b;}
+  .form-group select, .form-group input, .form-group textarea{width:100%;}
+  .status-toggle-group{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:6px;}
+  .status-item{
+    display:flex; justify-content:space-between; align-items:center;
+    background:var(--cinza-bg); padding:8px 12px; border-radius:8px;
+    font-size:13px; font-weight:600;
+  }
+  .modal-footer{display:flex; justify-content:flex-end; gap:10px; margin-top:22px;}
+
+  .toast{
+    position:fixed; bottom:24px; right:24px; background:var(--azul-escuro);
+    color:#fff; padding:14px 20px; border-radius:10px; font-size:14px;
+    box-shadow:0 6px 20px rgba(0,0,0,.25); z-index:300; display:none;
+    max-width:320px;
+  }
+  .toast.success{background:var(--verde);}
+  .toast.error{background:var(--vermelho);}
+  .loading-overlay{
+    position:fixed; inset:0; background:rgba(255,255,255,.7);
+    display:none; align-items:center; justify-content:center; z-index:400;
+    font-weight:700; color:var(--azul-escuro); font-size:15px;
+  }
+  .loading-overlay.active{display:flex;}
+  .spinner{
+    width:20px; height:20px; border:3px solid var(--azul-claro);
+    border-top-color:transparent; border-radius:50%;
+    animation:spin 0.8s linear infinite; margin-right:10px;
+  }
+  @keyframes spin{to{transform:rotate(360deg);}}
+  footer{
+    text-align:center; padding:18px; font-size:12px; color:#8492a3;
+  }
+  @media(max-width:700px){
+    .form-grid, .status-toggle-group{grid-template-columns:1fr;}
+    main{padding:16px;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <img src="https://chrysx6.github.io/LinksAguiaContab/links/img/logo1.jpg" alt="Águia Contab">
+    <div>
+      <h1>Controle de Folha de Pagamento</h1>
+      <span>Águia Contab • Painel Mensal</span>
+    </div>
+  </div>
+  <div class="header-actions">
+    <select id="monthSelect"></select>
+    <button class="btn btn-outline" id="btnNovoMes" title="Criar novo mês em branco">＋ Novo Mês</button>
+    <button class="btn btn-success" id="btnDuplicar" title="Duplicar empresas do mês anterior">⧉ Duplicar Mês Passado</button>
+  </div>
+</header>
+
+<main>
+  <div class="cards" id="cardsWrap"></div>
+
+  <div class="toolbar">
+    <div class="toolbar-left">
+      <input type="text" id="searchInput" placeholder="🔍 Buscar por empresa, apelido, CNPJ ou analista...">
+    </div>
+    <button class="btn btn-primary" id="btnNovaEmpresa">+ Cadastrar Empresa</button>
+  </div>
+
+  <div class="table-wrap">
+    <table id="dataTable">
+      <thead><tr id="theadRow"></tr></thead>
+      <tbody id="tbody"></tbody>
+    </table>
+    <div class="empty" id="emptyState" style="display:none;">Nenhuma empresa cadastrada neste mês ainda.</div>
+  </div>
+</main>
+
+<footer>Águia Contab © <span id="anoAtual"></span> — Sistema de Controle de Folha de Pagamento</footer>
+
+<!-- MODAL CADASTRO/EDIÇÃO -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <h2 id="modalTitle">Cadastrar Empresa</h2>
+    <form id="companyForm">
+      <div class="form-grid">
+        <div class="form-group"><label>Analista</label><input type="text" id="f_ANALISTA"></div>
+        <div class="form-group"><label>Apelido</label><input type="text" id="f_APELIDO"></div>
+        <div class="form-group full"><label>Empresa *</label><input type="text" id="f_EMPRESA" required></div>
+        <div class="form-group"><label>CNPJ *</label><input type="text" id="f_CNPJ" required></div>
+        <div class="form-group"><label>Regime Tributário</label>
+          <select id="f_REGIME_TRIBUTARIO">
+            <option value="">Selecione</option>
+            <option>Simples Nacional</option>
+            <option>Lucro Presumido</option>
+            <option>Lucro Real</option>
+            <option>MEI</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Colaboradores</label><input type="text" id="f_COLABORADORES"></div>
+        <div class="form-group"><label>Porte da Empresa</label>
+          <select id="f_PORTE_EMPRESA">
+            <option value="">Selecione</option>
+            <option>MEI</option>
+            <option>Micro</option>
+            <option>Pequeno</option>
+            <option>Médio</option>
+            <option>Grande</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Grau de Risco</label>
+          <select id="f_GRAU_DE_RISCO">
+            <option value="">Selecione</option>
+            <option>1</option><option>2</option><option>3</option><option>4</option>
+          </select>
+        </div>
+        <div class="form-group full"><label>Observações</label><textarea id="f_OBSERVACOES" rows="2"></textarea></div>
+
+        <div class="form-group full">
+          <label>Checklist do mês (Sim / Não)</label>
+          <div class="status-toggle-group" id="statusToggleGroup"></div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline" id="btnCancelar">Cancelar</button>
+        <button type="submit" class="btn btn-primary">💾 Salvar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<div class="loading-overlay" id="loadingOverlay"><div class="spinner"></div><span>Sincronizando com o Google Sheets...</span></div>
+
+<script>
+/* =========================================================================
+   CONFIGURAÇÃO — COLE AQUI A URL DO SEU APPS SCRIPT (termina em /exec)
+   ========================================================================= */
+const API_URL = "https://script.google.com/macros/s/AKfycbx3W7x47NusY2-bWR4xUc1cOpHsq00qynGAhdZVw8lNHiaWWsvS4LRdOVx1xYxIq7CI/exec";
+
+/* ========================================================================= */
+
+let STATE = {
+  headers: [],
+  statusCols: [],
+  baseCols: [],
+  rows: [],
+  month: null,
+  editingRow: null // null = criando nova empresa
+};
+
+document.getElementById('anoAtual').textContent = new Date().getFullYear();
+
+// ---------- Helpers de UI ----------
+function showLoading(v){ document.getElementById('loadingOverlay').classList.toggle('active', v); }
+function toast(msg, type){
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'toast ' + (type || '');
+  el.style.display = 'block';
+  setTimeout(() => { el.style.display = 'none'; }, 3800);
+}
+
+// ---------- Comunicação com o Apps Script ----------
+async function apiGet(params){
+  const url = new URL(API_URL);
+  Object.keys(params || {}).forEach(k => url.searchParams.set(k, params[k]));
+  const res = await fetch(url.toString());
+  return res.json();
+}
+
+async function apiPost(payload){
+  const res = await fetch(API_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' }, // evita preflight CORS
+    body: JSON.stringify(payload)
+  });
+  return res.json();
+}
+
+// ---------- Inicialização ----------
+async function init(){
+  showLoading(true);
+  try{
+    const cfg = await apiGet({ action: 'config' });
+    STATE.headers = cfg.headers;
+    STATE.statusCols = cfg.statusCols;
+    STATE.baseCols = cfg.baseCols;
+
+    const monthsRes = await apiGet({ action: 'months' });
+    const months = monthsRes.months || [];
+    const select = document.getElementById('monthSelect');
+    select.innerHTML = months.map(m => `<option value="${m}">${formatMonthLabel(m)}</option>`).join('');
+    const current = getCurrentMonthKey();
+    if(!months.includes(current)) {
+      select.insertAdjacentHTML('beforeend', `<option value="${current}">${formatMonthLabel(current)} (novo)</option>`);
+    }
+    select.value = months.includes(current) ? current : (months[months.length-1] || current);
+    STATE.month = select.value;
+
+    buildTableHead();
+    await loadMonthData();
+  }catch(err){
+    toast('Erro ao conectar com a planilha. Verifique a API_URL. ' + err.message, 'error');
+  }
+  showLoading(false);
+}
+
+function getCurrentMonthKey(){
+  const d = new Date();
+  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0');
+}
+
+function formatMonthLabel(key){
+  const meses = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+  const [y,m] = key.split('-');
+  return meses[parseInt(m,10)-1] + '/' + y;
+}
+
+async function loadMonthData(){
+  showLoading(true);
+  try{
+    const res = await apiGet({ action: 'data', month: STATE.month });
+    STATE.rows = res.data.rows || [];
+    renderTable();
+    renderCards();
+  }catch(err){
+    toast('Erro ao carregar dados do mês.', 'error');
+  }
+  showLoading(false);
+}
+
+// ---------- Renderização ----------
+function buildTableHead(){
+  const thead = document.getElementById('theadRow');
+  thead.innerHTML = STATE.headers.map(h => `<th>${h}</th>`).join('') + '<th>Ações</th>';
+}
+
+function renderCards(){
+  const wrap = document.getElementById('cardsWrap');
+  const total = STATE.rows.length;
+  let html = `<div class="card"><div class="num">${total}</div><div class="label">Empresas cadastradas</div></div>`;
+  STATE.statusCols.forEach(col => {
+    const count = STATE.rows.filter(r => r[col] === 'Sim').length;
+    html += `<div class="card"><div class="num">${count}/${total}</div><div class="label">${col}</div></div>`;
+  });
+  wrap.innerHTML = html;
+}
+
+function renderTable(filter){
+  const tbody = document.getElementById('tbody');
+  const emptyState = document.getElementById('emptyState');
+  let rows = STATE.rows;
+
+  if(filter){
+    const f = filter.toLowerCase();
+    rows = rows.filter(r =>
+      String(r['EMPRESA']||'').toLowerCase().includes(f) ||
+      String(r['APELIDO']||'').toLowerCase().includes(f) ||
+      String(r['CNPJ']||'').toLowerCase().includes(f) ||
+      String(r['ANALISTA']||'').toLowerCase().includes(f)
+    );
+  }
+
+  if(rows.length === 0){
+    tbody.innerHTML = '';
+    emptyState.style.display = 'block';
+    return;
+  }
+  emptyState.style.display = 'none';
+
+  tbody.innerHTML = rows.map(r => {
+    const cells = STATE.headers.map(h => {
+      if(STATE.statusCols.includes(h)){
+        const val = r[h] === 'Sim' ? 'Sim' : 'Não';
+        const cls = val === 'Sim' ? 'sim' : 'nao';
+        return `<td><button class="badge ${cls}" onclick="toggleStatus(${r._row}, '${h.replace(/'/g,"\\'")}', '${val}')">${val === 'Sim' ? '✔ Sim' : '✘ Não'}</button></td>`;
+      }
+      return `<td>${r[h] !== undefined ? r[h] : ''}</td>`;
+    }).join('');
+    return `<tr>${cells}<td class="actions-col">
+        <button class="icon-btn" title="Editar" onclick="openEdit(${r._row})">✎</button>
+        <button class="icon-btn del" title="Excluir" onclick="confirmDelete(${r._row}, '${String(r['EMPRESA']||'').replace(/'/g,"\\'")}')">🗑</button>
+      </td></tr>`;
+  }).join('');
+}
+
+// ---------- Toggle Sim/Não em tempo real ----------
+async function toggleStatus(rowIndex, field, currentVal){
+  const newVal = currentVal === 'Sim' ? 'Não' : 'Sim';
+  // Atualiza visualmente antes de confirmar (otimista)
+  const rowObj = STATE.rows.find(r => r._row === rowIndex);
+  if(rowObj) rowObj[field] = newVal;
+  renderTable(document.getElementById('searchInput').value);
+  renderCards();
+
+  try{
+    const res = await apiPost({ action:'updateField', month: STATE.month, rowIndex, field, value: newVal });
+    if(!res.success){ toast(res.message || 'Erro ao atualizar campo.', 'error'); await loadMonthData(); }
+  }catch(err){
+    toast('Erro de conexão ao atualizar status.', 'error');
+    await loadMonthData();
+  }
+}
+window.toggleStatus = toggleStatus;
+
+// ---------- Cadastro / Edição ----------
+function buildStatusToggles(rowData){
+  const wrap = document.getElementById('statusToggleGroup');
+  wrap.innerHTML = STATE.statusCols.map(col => {
+    const val = rowData && rowData[col] === 'Sim' ? 'Sim' : 'Não';
+    return `<div class="status-item">
+      <span>${col}</span>
+      <button type="button" class="badge ${val === 'Sim' ? 'sim':'nao'}" data-field="${col}" onclick="flipFormToggle(this)">${val === 'Sim' ? '✔ Sim' : '✘ Não'}</button>
+    </div>`;
+  }).join('');
+}
+function flipFormToggle(btn){
+  const isSim = btn.classList.contains('sim');
+  btn.classList.toggle('sim', !isSim);
+  btn.classList.toggle('nao', isSim);
+  btn.textContent = !isSim ? '✔ Sim' : '✘ Não';
+}
+window.flipFormToggle = flipFormToggle;
+
+function openCreate(){
+  STATE.editingRow = null;
+  document.getElementById('modalTitle').textContent = 'Cadastrar Empresa';
+  document.getElementById('companyForm').reset();
+  buildStatusToggles(null);
+  document.getElementById('modalOverlay').classList.add('active');
+}
+
+function openEdit(rowIndex){
+  const row = STATE.rows.find(r => r._row === rowIndex);
+  if(!row) return;
+  STATE.editingRow = rowIndex;
+  document.getElementById('modalTitle').textContent = 'Editar Empresa';
+  document.getElementById('f_ANALISTA').value = row['ANALISTA'] || '';
+  document.getElementById('f_APELIDO').value = row['APELIDO'] || '';
+  document.getElementById('f_EMPRESA').value = row['EMPRESA'] || '';
+  document.getElementById('f_CNPJ').value = row['CNPJ'] || '';
+  document.getElementById('f_REGIME_TRIBUTARIO').value = row['REGIME TRIBUTARIO'] || '';
+  document.getElementById('f_COLABORADORES').value = row['COLABORADORES'] || '';
+  document.getElementById('f_PORTE_EMPRESA').value = row['PORTE EMPRESA'] || '';
+  document.getElementById('f_GRAU_DE_RISCO').value = row['GRAU DE RISCO'] || '';
+  document.getElementById('f_OBSERVACOES').value = row['OBSERVAÇÕES'] || '';
+  buildStatusToggles(row);
+  document.getElementById('modalOverlay').classList.add('active');
+}
+window.openEdit = openEdit;
+
+function closeModal(){
+  document.getElementById('modalOverlay').classList.remove('active');
+}
+
+document.getElementById('btnNovaEmpresa').addEventListener('click', openCreate);
+document.getElementById('btnCancelar').addEventListener('click', closeModal);
+document.getElementById('modalOverlay').addEventListener('click', (e) => {
+  if(e.target.id === 'modalOverlay') closeModal();
+});
+
+document.getElementById('companyForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const data = {
+    'ANALISTA': document.getElementById('f_ANALISTA').value,
+    'APELIDO': document.getElementById('f_APELIDO').value,
+    'EMPRESA': document.getElementById('f_EMPRESA').value,
+    'CNPJ': document.getElementById('f_CNPJ').value,
+    'REGIME TRIBUTARIO': document.getElementById('f_REGIME_TRIBUTARIO').value,
+    'COLABORADORES': document.getElementById('f_COLABORADORES').value,
+    'PORTE EMPRESA': document.getElementById('f_PORTE_EMPRESA').value,
+    'GRAU DE RISCO': document.getElementById('f_GRAU_DE_RISCO').value,
+    'OBSERVAÇÕES': document.getElementById('f_OBSERVACOES').value,
+  };
+  document.querySelectorAll('#statusToggleGroup .badge').forEach(btn => {
+    data[btn.dataset.field] = btn.classList.contains('sim') ? 'Sim' : 'Não';
+  });
+
+  showLoading(true);
+  try{
+    const res = await apiPost({ action:'save', month: STATE.month, rowIndex: STATE.editingRow, data });
+    if(res.success){
+      toast('Empresa salva com sucesso!', 'success');
+      closeModal();
+      await loadMonthData();
+    } else {
+      toast(res.message || 'Erro ao salvar.', 'error');
+    }
+  }catch(err){
+    toast('Erro de conexão ao salvar empresa.', 'error');
+  }
+  showLoading(false);
+});
+
+// ---------- Excluir ----------
+async function confirmDelete(rowIndex, nome){
+  if(!confirm(`Tem certeza que deseja excluir a empresa "${nome}"? Essa ação não pode ser desfeita.`)) return;
+  showLoading(true);
+  try{
+    const res = await apiPost({ action:'delete', month: STATE.month, rowIndex });
+    if(res.success){
+      toast('Empresa excluída.', 'success');
+      await loadMonthData();
+    } else {
+      toast(res.message || 'Erro ao excluir.', 'error');
+    }
+  }catch(err){
+    toast('Erro de conexão ao excluir.', 'error');
+  }
+  showLoading(false);
+}
+window.confirmDelete = confirmDelete;
+
+// ---------- Duplicar mês passado ----------
+document.getElementById('btnDuplicar').addEventListener('click', async () => {
+  if(!confirm(`Isso vai copiar as empresas do mês anterior para ${formatMonthLabel(STATE.month)}, substituindo os dados atuais deste mês. Deseja continuar?`)) return;
+  showLoading(true);
+  try{
+    const res = await apiPost({ action:'duplicate', month: STATE.month });
+    if(res.success){
+      toast(res.message, 'success');
+      await loadMonthData();
+    } else {
+      toast(res.message || 'Não foi possível duplicar.', 'error');
+    }
+  }catch(err){
+    toast('Erro de conexão ao duplicar mês.', 'error');
+  }
+  showLoading(false);
+});
+
+// ---------- Criar novo mês ----------
+document.getElementById('btnNovoMes').addEventListener('click', async () => {
+  const mes = prompt('Digite o novo mês no formato AAAA-MM (ex: 2026-11):');
+  if(!mes) return;
+  if(!/^\d{4}-\d{2}$/.test(mes)){ toast('Formato inválido. Use AAAA-MM.', 'error'); return; }
+  showLoading(true);
+  try{
+    const res = await apiPost({ action:'createMonth', month: mes });
+    if(res.success !== false){
+      const select = document.getElementById('monthSelect');
+      if(![...select.options].some(o => o.value === mes)){
+        select.insertAdjacentHTML('beforeend', `<option value="${mes}">${formatMonthLabel(mes)}</option>`);
+      }
+      select.value = mes;
+      STATE.month = mes;
+      toast('Mês criado com sucesso!', 'success');
+      await loadMonthData();
+    } else {
+      toast(res.message, 'error');
+    }
+  }catch(err){
+    toast('Erro de conexão ao criar mês.', 'error');
+  }
+  showLoading(false);
+});
+
+// ---------- Troca de mês ----------
+document.getElementById('monthSelect').addEventListener('change', async (e) => {
+  STATE.month = e.target.value;
+  await loadMonthData();
+});
+
+// ---------- Busca ----------
+document.getElementById('searchInput').addEventListener('input', (e) => {
+  renderTable(e.target.value);
+});
+
+init();
+</script>
+<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v31edd6df95cf4e85bb4c19e7a9bdbcba1788362987495" integrity="sha512-iIg7k2xntmwu6/uSb5tpc/hySgZc4eoL31yB29W6tJFo2akwjPWcEqnCEdJvGexCL0KEQwVYv5BlowfhVz26hg==" data-cf-beacon='{"version":"2024.11.0","token":"55d6c902a8a143b1ab6c5051b2a1f75b","spa":2}' crossorigin="anonymous"></script>
+</body>
+</html>
