@@ -12,9 +12,19 @@
   --verde:#1fa25c;
   --vermelho:#d9463b;
   --cinza-bg:#f2f5f9;
-  --cinza-borda:#dfe6ee;
+  --cinza-borda:#c7d2de;
   --texto:#1c2b3a;
   --branco:#ffffff;
+  --card-bg:#ffffff;
+  --selecionado:#dbeafe;
+}
+body.dark{
+  --cinza-bg:#0f1720;
+  --cinza-borda:#2b3a4a;
+  --texto:#e6edf3;
+  --branco:#16212c;
+  --card-bg:#16212c;
+  --selecionado:#1e3a5c;
 }
 *{box-sizing:border-box;}
 body{
@@ -22,6 +32,7 @@ body{
   font-family:'Segoe UI', Arial, sans-serif;
   background:var(--cinza-bg);
   color:var(--texto);
+  transition:background .2s, color .2s;
 }
 header{
   background:linear-gradient(90deg,var(--azul-escuro),var(--azul));
@@ -42,10 +53,11 @@ header{
 .brand h1{font-size:18px; margin:0; font-weight:600; line-height:1.2;}
 .brand span{font-size:12px; opacity:.85;}
 .header-actions{display:flex; gap:10px; align-items:center; flex-wrap:wrap;}
-select, input[type=text], input[type=month], textarea{
+select, input[type=text], input[type=number], input[type=month], textarea{
   padding:9px 12px; border-radius:8px; border:1px solid var(--cinza-borda); font-size:14px; outline:none;
+  background:var(--branco); color:var(--texto);
 }
-header select, header input{border:none;}
+header select{border:none;}
 .btn{
   border:none; padding:10px 16px; border-radius:8px; font-size:14px; font-weight:600;
   cursor:pointer; display:inline-flex; align-items:center; gap:6px; transition:.15s;
@@ -58,41 +70,47 @@ header select, header input{border:none;}
 .btn-danger:hover{background:#b8382e;}
 .btn-outline{background:#fff; color:var(--azul); border:1px solid var(--cinza-borda);}
 .btn-outline:hover{background:var(--cinza-bg);}
+.btn-theme{background:rgba(255,255,255,.15); color:#fff; border:1px solid rgba(255,255,255,.3); border-radius:8px; padding:9px 13px; cursor:pointer; font-size:15px;}
+.btn-theme:hover{background:rgba(255,255,255,.28);}
 main{padding:24px 28px 60px;}
 .cards{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:14px; margin-bottom:22px;}
-.card{background:var(--branco); border:1px solid var(--cinza-borda); border-radius:12px; padding:14px 16px; box-shadow:0 1px 3px rgba(0,0,0,.04);}
-.card .num{font-size:24px; font-weight:700; color:var(--azul-escuro);}
-.card .label{font-size:12px; color:#5b6b7c; margin-top:4px;}
+.card{background:var(--card-bg); border:1px solid var(--cinza-borda); border-radius:12px; padding:14px 16px; box-shadow:0 1px 3px rgba(0,0,0,.04);}
+.card .num{font-size:24px; font-weight:700; color:var(--azul-claro);}
+.card .label{font-size:12px; color:#7c8ba0; margin-top:4px;}
 .toolbar{display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:16px;}
 .toolbar-left{display:flex; gap:10px; flex-wrap:wrap; align-items:center;}
-.table-wrap{background:var(--branco); border-radius:12px; border:1px solid var(--cinza-borda); overflow:auto; box-shadow:0 1px 4px rgba(0,0,0,.04);}
-table{border-collapse:collapse; width:100%; min-width:1400px; font-size:13.5px;}
-thead th{background:var(--azul-escuro); color:#fff; text-align:left; padding:11px 10px; position:sticky; top:0; white-space:nowrap; font-weight:600;}
-tbody td{padding:9px 10px; border-bottom:1px solid var(--cinza-borda); white-space:nowrap;}
-tbody tr:hover{background:#f7fafd;}
-.badge{display:inline-flex; align-items:center; gap:4px; padding:5px 11px; border-radius:20px; font-size:12.5px; font-weight:700; cursor:pointer; border:2px solid transparent; user-select:none;}
-.badge.sim{background:#e3f8ea; color:var(--verde); border-color:#bdeccd;}
-.badge.nao{background:#fbe8e6; color:var(--vermelho); border-color:#f5c4bf;}
+.table-wrap{background:var(--card-bg); border-radius:12px; border:1px solid var(--cinza-borda); overflow:auto; box-shadow:0 1px 4px rgba(0,0,0,.04);}
+table{border-collapse:collapse; width:100%; min-width:1450px; font-size:13.5px;}
+thead th{background:var(--azul-escuro); color:#fff; text-align:left; padding:11px 10px; position:sticky; top:0; white-space:nowrap; font-weight:600; border:1px solid #1c3a63;}
+tbody td{padding:9px 10px; border:1px solid var(--cinza-borda); white-space:nowrap;}
+tbody tr:hover{background:var(--cinza-bg); cursor:pointer;}
+tbody tr.row-selected{background:var(--selecionado) !important; outline:2px solid var(--azul-claro); outline-offset:-2px;}
+.badge{display:inline-flex; align-items:center; gap:4px; padding:5px 11px; border-radius:20px; font-size:12.5px; font-weight:700; cursor:pointer; border:none; user-select:none;}
+.badge.sim{background:#e3f8ea; color:var(--verde);}
+.badge.nao{background:#fbe8e6; color:var(--vermelho);}
+.numero-cell{font-weight:700; color:var(--azul-claro); text-align:center;}
 .actions-col{display:flex; gap:6px;}
 .icon-btn{border:none; background:#eef3f8; color:var(--azul); width:30px; height:30px; border-radius:7px; cursor:pointer; font-size:14px;}
+body.dark .icon-btn{background:#233242; color:#9fc4e8;}
 .icon-btn.del{color:var(--vermelho);}
 .icon-btn:hover{filter:brightness(0.95);}
 .empty{text-align:center; padding:50px 20px; color:#8492a3;}
 .modal-overlay{position:fixed; inset:0; background:rgba(11,37,69,.55); display:none; align-items:center; justify-content:center; z-index:200; padding:20px;}
 .modal-overlay.active{display:flex;}
-.modal{background:#fff; border-radius:14px; max-width:640px; width:100%; max-height:90vh; overflow:auto; padding:26px 28px; box-shadow:0 10px 40px rgba(0,0,0,.25);}
-.modal h2{margin-top:0; color:var(--azul-escuro); font-size:19px;}
+.modal{background:var(--card-bg); color:var(--texto); border-radius:14px; max-width:640px; width:100%; max-height:90vh; overflow:auto; padding:26px 28px; box-shadow:0 10px 40px rgba(0,0,0,.25);}
+.modal h2{margin-top:0; color:var(--azul-claro); font-size:19px;}
 .form-grid{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:16px;}
 .form-grid .full{grid-column:1/-1;}
-.form-group label{display:block; font-size:12.5px; font-weight:600; margin-bottom:5px; color:#41556b;}
+.form-group label{display:block; font-size:12.5px; font-weight:600; margin-bottom:5px; color:#7c8ba0;}
 .form-group select, .form-group input, .form-group textarea{width:100%;}
 .status-toggle-group{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:6px;}
-.status-item{display:flex; justify-content:space-between; align-items:center; background:var(--cinza-bg); padding:8px 12px; border-radius:8px; font-size:13px; font-weight:600;}
+.status-item{display:flex; justify-content:space-between; align-items:center; background:var(--cinza-bg); padding:8px 12px; border-radius:8px; font-size:13px; font-weight:600; border:1px solid var(--cinza-borda);}
 .modal-footer{display:flex; justify-content:flex-end; gap:10px; margin-top:22px;}
-.toast{position:fixed; bottom:24px; right:24px; background:var(--azul-escuro); color:#fff; padding:14px 20px; border-radius:10px; font-size:14px; box-shadow:0 6px 20px rgba(0,0,0,.25); z-index:300; display:none; max-width:340px;}
+.toast{position:fixed; bottom:24px; right:24px; background:var(--azul-escuro); color:#fff; padding:14px 20px; border-radius:10px; font-size:14px; box-shadow:0 6px 20px rgba(0,0,0,.25); z-index:300; display:none; max-width:320px;}
 .toast.success{background:var(--verde);}
 .toast.error{background:var(--vermelho);}
-.loading-overlay{position:fixed; inset:0; background:rgba(255,255,255,.75); display:none; align-items:center; justify-content:center; z-index:400; font-weight:700; color:var(--azul-escuro); font-size:15px;}
+.loading-overlay{position:fixed; inset:0; background:rgba(255,255,255,.7); display:none; align-items:center; justify-content:center; z-index:400; font-weight:700; color:var(--azul-escuro); font-size:15px;}
+body.dark .loading-overlay{background:rgba(10,16,22,.75); color:#e6edf3;}
 .loading-overlay.active{display:flex;}
 .spinner{width:20px; height:20px; border:3px solid var(--azul-claro); border-top-color:transparent; border-radius:50%; animation:spin 0.8s linear infinite; margin-right:10px;}
 @keyframes spin{to{transform:rotate(360deg);}}
@@ -116,7 +134,8 @@ footer{text-align:center; padding:18px; font-size:12px; color:#8492a3;}
   <div class="header-actions">
     <select id="monthSelect" title="Selecionar mês"></select>
     <button class="btn btn-outline" id="btnNovoMes" title="Criar novo mês em branco">＋ Novo Mês</button>
-    <button class="btn btn-primary" id="btnDuplicar" title="Duplicar empresas do mês anterior">⧉ Duplicar Mês Passado</button>
+    <button class="btn btn-success" id="btnDuplicar" title="Duplicar empresas do mês anterior">⧉ Duplicar Mês Passado</button>
+    <button class="btn-theme" id="btnTheme" title="Alternar modo claro/escuro">🌙</button>
   </div>
 </header>
 
@@ -125,9 +144,9 @@ footer{text-align:center; padding:18px; font-size:12px; color:#8492a3;}
 
   <div class="toolbar">
     <div class="toolbar-left">
-      <input type="text" id="searchInput" placeholder="🔍 Buscar por empresa, apelido, CNPJ ou analista..." style="min-width:320px;">
+      <input type="text" id="searchInput" placeholder="🔍 Buscar por empresa, apelido, CNPJ ou analista...">
     </div>
-    <button class="btn btn-success" id="btnNovaEmpresa">+ Cadastrar Empresa</button>
+    <button class="btn btn-primary" id="btnNovaEmpresa">+ Cadastrar Empresa</button>
   </div>
 
   <div class="table-wrap">
@@ -161,7 +180,8 @@ footer{text-align:center; padding:18px; font-size:12px; color:#8492a3;}
             <option>MEI</option>
           </select>
         </div>
-        <div class="form-group"><label>Colaboradores</label><input type="text" id="f_COLABORADORES"></div>
+        <div class="form-group"><label>Colaboradores</label><input type="number" min="0" id="f_COLABORADORES"></div>
+        <div class="form-group"><label>Econsignado</label><input type="number" min="0" id="f_ECONSIGNADO"></div>
         <div class="form-group">
           <label>Porte da Empresa</label>
           <select id="f_PORTE_EMPRESA">
@@ -188,14 +208,14 @@ footer{text-align:center; padding:18px; font-size:12px; color:#8492a3;}
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-outline" id="btnCancelar">Cancelar</button>
-        <button type="submit" class="btn btn-success">💾 Salvar</button>
+        <button type="submit" class="btn btn-primary">💾 Salvar</button>
       </div>
     </form>
   </div>
 </div>
 
 <div class="toast" id="toast"></div>
-<div class="loading-overlay" id="loadingOverlay"><div class="spinner"></div> Sincronizando com o Google Sheets...</div>
+<div class="loading-overlay" id="loadingOverlay"><div class="spinner"></div>Sincronizando com o Google Sheets...</div>
 
 <script>
 /* =========================================================================
@@ -205,10 +225,25 @@ const API_URL = "https://script.google.com/macros/s/AKfycbx3W7x47NusY2-bWR4xUc1c
 /* ========================================================================= */
 
 let STATE = {
-  headers: [], statusCols: [], baseCols: [], rows: [], month: null, editingRow: null
+  headers: [], statusCols: [], baseCols: [], numericCols: [], rows: [], month: null, editingRow: null, selectedRow: null
 };
 
 document.getElementById('anoAtual').textContent = new Date().getFullYear();
+
+// ---------- MODO NOTURNO ----------
+function applyTheme(theme){
+  document.body.classList.toggle('dark', theme === 'dark');
+  document.getElementById('btnTheme').textContent = theme === 'dark' ? '☀️' : '🌙';
+  localStorage.setItem('aguia_theme', theme);
+}
+(function initTheme(){
+  const saved = localStorage.getItem('aguia_theme') || 'light';
+  applyTheme(saved);
+})();
+document.getElementById('btnTheme').addEventListener('click', () => {
+  const current = document.body.classList.contains('dark') ? 'dark' : 'light';
+  applyTheme(current === 'dark' ? 'light' : 'dark');
+});
 
 function showLoading(v){ document.getElementById('loadingOverlay').classList.toggle('active', v); }
 function toast(msg, type){
@@ -219,70 +254,52 @@ function toast(msg, type){
   setTimeout(() => { el.style.display = 'none'; }, 3800);
 }
 
-// fetch com anti-cache (evita o erro 404 do link temporário do Apps Script)
-// e retry automático em caso de falha transitória.
-async function fetchJson(url, options, retries){
-  retries = retries === undefined ? 1 : retries;
-  const opts = Object.assign({ cache: 'no-store' }, options || {});
-  try {
-    const res = await fetch(url, opts);
-    if(!res.ok) throw new Error('HTTP ' + res.status);
-    const text = await res.text();
-    try{
-      return JSON.parse(text);
-    }catch(parseErr){
-      throw new Error('Resposta inválida do servidor (não é JSON).');
-    }
-  } catch (err) {
-    if (retries > 0) {
-      await new Promise(r => setTimeout(r, 600));
-      return fetchJson(url, options, retries - 1);
-    }
-    throw err;
-  }
-}
-
 async function apiGet(params){
   const url = new URL(API_URL);
   Object.keys(params || {}).forEach(k => url.searchParams.set(k, params[k]));
-  url.searchParams.set('_t', Date.now()); // quebra qualquer cache
-  return fetchJson(url.toString(), { method: 'GET' });
+  url.searchParams.set('_t', Date.now());
+  const res = await fetch(url.toString(), { cache: 'no-store' });
+  return res.json();
 }
 async function apiPost(payload){
-  return fetchJson(API_URL, {
+  const res = await fetch(API_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-    body: JSON.stringify(payload)
+    body: JSON.stringify(payload),
+    cache: 'no-store'
   });
+  return res.json();
+}
+async function withRetry(fn, tries){
+  tries = tries || 2;
+  let lastErr;
+  for(let i=0;i<tries;i++){
+    try{ return await fn(); }catch(err){ lastErr = err; await new Promise(r=>setTimeout(r, 400)); }
+  }
+  throw lastErr;
 }
 
 async function init(){
   showLoading(true);
   try{
-    // UMA ÚNICA chamada: traz config + meses + dados do mês atual de uma vez.
-    const initRes = await apiGet({ action: 'init' });
-    if(!initRes.success){ throw new Error(initRes.message || 'Falha ao iniciar.'); }
+    const cfg = await withRetry(() => apiGet({ action: 'init' }));
+    STATE.headers = cfg.headers;
+    STATE.statusCols = cfg.statusCols;
+    STATE.baseCols = cfg.baseCols;
+    STATE.numericCols = cfg.numericCols || ['COLABORADORES','ECONSIGNADO'];
 
-    STATE.headers = initRes.headers;
-    STATE.statusCols = initRes.statusCols;
-    STATE.baseCols = initRes.baseCols;
-    STATE.month = initRes.month;
-    STATE.rows = (initRes.data && initRes.data.rows) || [];
-
+    const months = cfg.months || [];
     const select = document.getElementById('monthSelect');
-    const months = initRes.months || [];
     select.innerHTML = months.map(m => `<option value="${m}">${formatMonthLabel(m)}</option>`).join('');
-    const current = getCurrentMonthKey();
-    if(!months.includes(current)){
-      select.insertAdjacentHTML('beforeend', `<option value="${current}">${formatMonthLabel(current)} (novo)</option>`);
-    }
-    select.value = STATE.month;
+    STATE.month = cfg.month;
+    select.value = cfg.month;
 
     buildTableHead();
+    STATE.rows = (cfg.data && cfg.data.rows) || [];
     renderTable();
     renderCards();
   }catch(err){
-    toast('Erro ao conectar com a planilha: ' + err.message, 'error');
+    toast('Erro ao conectar com a planilha. Verifique a API_URL. ' + err.message, 'error');
   }
   showLoading(false);
 }
@@ -300,13 +317,13 @@ function formatMonthLabel(key){
 async function loadMonthData(){
   showLoading(true);
   try{
-    const res = await apiGet({ action: 'data', month: STATE.month });
-    if(!res.success) throw new Error(res.message || 'Falha ao carregar dados.');
+    const res = await withRetry(() => apiGet({ action: 'data', month: STATE.month }));
     STATE.rows = res.data.rows || [];
-    renderTable(document.getElementById('searchInput').value);
+    STATE.selectedRow = null;
+    renderTable();
     renderCards();
   }catch(err){
-    toast('Erro ao carregar dados do mês: ' + err.message, 'error');
+    toast('Erro ao carregar dados do mês.', 'error');
   }
   showLoading(false);
 }
@@ -354,16 +371,28 @@ function renderTable(filter){
       if(STATE.statusCols.includes(h)){
         const val = r[h] === 'Sim' ? 'Sim' : 'Não';
         const cls = val === 'Sim' ? 'sim' : 'nao';
-        return `<td><button class="badge ${cls}" onclick="toggleStatus(${r._row}, '${h.replace(/'/g,"\\'")}', '${val}')">${val === 'Sim' ? '✔ Sim' : '✘ Não'}</button></td>`;
+        return `<td><button class="badge ${cls}" onclick="event.stopPropagation(); toggleStatus(${r._row}, '${h.replace(/'/g,"\\'")}', '${val}')">${val === 'Sim' ? '✔ Sim' : '✘ Não'}</button></td>`;
+      }
+      if(STATE.numericCols.includes(h)){
+        return `<td class="numero-cell">${r[h] !== undefined && r[h] !== '' ? r[h] : 0}</td>`;
       }
       return `<td>${r[h] !== undefined ? r[h] : ''}</td>`;
     }).join('');
-    return `<tr>${cells}<td class="actions-col">
-        <button class="icon-btn" title="Editar" onclick="openEdit(${r._row})">✎</button>
-        <button class="icon-btn del" title="Excluir" onclick="confirmDelete(${r._row}, '${String(r['EMPRESA']||'').replace(/'/g,"\\'")}')">🗑</button>
+    const selectedCls = STATE.selectedRow === r._row ? ' row-selected' : '';
+    return `<tr data-row="${r._row}" class="${selectedCls.trim()}" onclick="selectRow(${r._row})">${cells}<td class="actions-col">
+        <button class="icon-btn" title="Editar" onclick="event.stopPropagation(); openEdit(${r._row})">✎</button>
+        <button class="icon-btn del" title="Excluir" onclick="event.stopPropagation(); confirmDelete(${r._row}, '${String(r['EMPRESA']||'').replace(/'/g,"\\'")}')">🗑</button>
       </td></tr>`;
   }).join('');
 }
+
+function selectRow(rowIndex){
+  STATE.selectedRow = STATE.selectedRow === rowIndex ? null : rowIndex;
+  document.querySelectorAll('#tbody tr').forEach(tr => {
+    tr.classList.toggle('row-selected', parseInt(tr.dataset.row,10) === STATE.selectedRow);
+  });
+}
+window.selectRow = selectRow;
 
 async function toggleStatus(rowIndex, field, currentVal){
   const newVal = currentVal === 'Sim' ? 'Não' : 'Sim';
@@ -419,6 +448,7 @@ function openEdit(rowIndex){
   document.getElementById('f_CNPJ').value = row['CNPJ'] || '';
   document.getElementById('f_REGIME_TRIBUTARIO').value = row['REGIME TRIBUTARIO'] || '';
   document.getElementById('f_COLABORADORES').value = row['COLABORADORES'] || '';
+  document.getElementById('f_ECONSIGNADO').value = row['ECONSIGNADO'] || '';
   document.getElementById('f_PORTE_EMPRESA').value = row['PORTE EMPRESA'] || '';
   document.getElementById('f_GRAU_DE_RISCO').value = row['GRAU DE RISCO'] || '';
   document.getElementById('f_OBSERVACOES').value = row['OBSERVAÇÕES'] || '';
@@ -446,6 +476,7 @@ document.getElementById('companyForm').addEventListener('submit', async (e) => {
     'CNPJ': document.getElementById('f_CNPJ').value,
     'REGIME TRIBUTARIO': document.getElementById('f_REGIME_TRIBUTARIO').value,
     'COLABORADORES': document.getElementById('f_COLABORADORES').value,
+    'ECONSIGNADO': document.getElementById('f_ECONSIGNADO').value,
     'PORTE EMPRESA': document.getElementById('f_PORTE_EMPRESA').value,
     'GRAU DE RISCO': document.getElementById('f_GRAU_DE_RISCO').value,
     'OBSERVAÇÕES': document.getElementById('f_OBSERVACOES').value,
@@ -465,7 +496,7 @@ document.getElementById('companyForm').addEventListener('submit', async (e) => {
       toast(res.message || 'Erro ao salvar.', 'error');
     }
   }catch(err){
-    toast('Erro de conexão ao salvar empresa: ' + err.message, 'error');
+    toast('Erro de conexão ao salvar empresa.', 'error');
   }
   showLoading(false);
 });
@@ -482,7 +513,7 @@ async function confirmDelete(rowIndex, nome){
       toast(res.message || 'Erro ao excluir.', 'error');
     }
   }catch(err){
-    toast('Erro de conexão ao excluir: ' + err.message, 'error');
+    toast('Erro de conexão ao excluir.', 'error');
   }
   showLoading(false);
 }
@@ -500,7 +531,7 @@ document.getElementById('btnDuplicar').addEventListener('click', async () => {
       toast(res.message || 'Não foi possível duplicar.', 'error');
     }
   }catch(err){
-    toast('Erro de conexão ao duplicar mês: ' + err.message, 'error');
+    toast('Erro de conexão ao duplicar mês.', 'error');
   }
   showLoading(false);
 });
@@ -525,7 +556,7 @@ document.getElementById('btnNovoMes').addEventListener('click', async () => {
       toast(res.message, 'error');
     }
   }catch(err){
-    toast('Erro de conexão ao criar mês: ' + err.message, 'error');
+    toast('Erro de conexão ao criar mês.', 'error');
   }
   showLoading(false);
 });
