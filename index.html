@@ -70,9 +70,9 @@ table{border-collapse:collapse; width:100%; min-width:1400px; font-size:13.5px;}
 thead th{background:var(--azul-escuro); color:#fff; text-align:left; padding:11px 10px; position:sticky; top:0; white-space:nowrap; font-weight:600;}
 tbody td{padding:9px 10px; border-bottom:1px solid var(--cinza-borda); white-space:nowrap;}
 tbody tr:hover{background:#f7fafd;}
-.badge{display:inline-flex; align-items:center; gap:4px; padding:5px 11px; border-radius:20px; font-size:12.5px; font-weight:700; cursor:pointer; border:none; user-select:none;}
-.badge.sim{background:#e3f8ea; color:var(--verde);}
-.badge.nao{background:#fbe8e6; color:var(--vermelho);}
+.badge{display:inline-flex; align-items:center; gap:4px; padding:5px 11px; border-radius:20px; font-size:12.5px; font-weight:700; cursor:pointer; border:2px solid transparent; user-select:none;}
+.badge.sim{background:#e3f8ea; color:var(--verde); border-color:#bdeccd;}
+.badge.nao{background:#fbe8e6; color:var(--vermelho); border-color:#f5c4bf;}
 .actions-col{display:flex; gap:6px;}
 .icon-btn{border:none; background:#eef3f8; color:var(--azul); width:30px; height:30px; border-radius:7px; cursor:pointer; font-size:14px;}
 .icon-btn.del{color:var(--vermelho);}
@@ -89,10 +89,10 @@ tbody tr:hover{background:#f7fafd;}
 .status-toggle-group{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:6px;}
 .status-item{display:flex; justify-content:space-between; align-items:center; background:var(--cinza-bg); padding:8px 12px; border-radius:8px; font-size:13px; font-weight:600;}
 .modal-footer{display:flex; justify-content:flex-end; gap:10px; margin-top:22px;}
-.toast{position:fixed; bottom:24px; right:24px; background:var(--azul-escuro); color:#fff; padding:14px 20px; border-radius:10px; font-size:14px; box-shadow:0 6px 20px rgba(0,0,0,.25); z-index:300; display:none; max-width:320px;}
+.toast{position:fixed; bottom:24px; right:24px; background:var(--azul-escuro); color:#fff; padding:14px 20px; border-radius:10px; font-size:14px; box-shadow:0 6px 20px rgba(0,0,0,.25); z-index:300; display:none; max-width:340px;}
 .toast.success{background:var(--verde);}
 .toast.error{background:var(--vermelho);}
-.loading-overlay{position:fixed; inset:0; background:rgba(255,255,255,.7); display:none; align-items:center; justify-content:center; z-index:400; font-weight:700; color:var(--azul-escuro); font-size:15px;}
+.loading-overlay{position:fixed; inset:0; background:rgba(255,255,255,.75); display:none; align-items:center; justify-content:center; z-index:400; font-weight:700; color:var(--azul-escuro); font-size:15px;}
 .loading-overlay.active{display:flex;}
 .spinner{width:20px; height:20px; border:3px solid var(--azul-claro); border-top-color:transparent; border-radius:50%; animation:spin 0.8s linear infinite; margin-right:10px;}
 @keyframes spin{to{transform:rotate(360deg);}}
@@ -116,7 +116,7 @@ footer{text-align:center; padding:18px; font-size:12px; color:#8492a3;}
   <div class="header-actions">
     <select id="monthSelect" title="Selecionar mês"></select>
     <button class="btn btn-outline" id="btnNovoMes" title="Criar novo mês em branco">＋ Novo Mês</button>
-    <button class="btn btn-outline" id="btnDuplicar" title="Duplicar empresas do mês anterior">⧉ Duplicar Mês Passado</button>
+    <button class="btn btn-primary" id="btnDuplicar" title="Duplicar empresas do mês anterior">⧉ Duplicar Mês Passado</button>
   </div>
 </header>
 
@@ -125,7 +125,7 @@ footer{text-align:center; padding:18px; font-size:12px; color:#8492a3;}
 
   <div class="toolbar">
     <div class="toolbar-left">
-      <input type="text" id="searchInput" placeholder="🔍 Buscar por empresa, apelido, CNPJ ou analista..." style="min-width:280px;">
+      <input type="text" id="searchInput" placeholder="🔍 Buscar por empresa, apelido, CNPJ ou analista..." style="min-width:320px;">
     </div>
     <button class="btn btn-success" id="btnNovaEmpresa">+ Cadastrar Empresa</button>
   </div>
@@ -135,11 +135,11 @@ footer{text-align:center; padding:18px; font-size:12px; color:#8492a3;}
       <thead><tr id="theadRow"></tr></thead>
       <tbody id="tbody"></tbody>
     </table>
+    <div class="empty" id="emptyState" style="display:none;">Nenhuma empresa cadastrada neste mês ainda.</div>
   </div>
-  <div class="empty" id="emptyState" style="display:none;">Nenhuma empresa cadastrada neste mês ainda.</div>
 </main>
 
-<footer>Águia Contab &copy; <span id="anoAtual"></span> — Sistema de Controle de Folha de Pagamento</footer>
+<footer>Águia Contab © <span id="anoAtual"></span> — Sistema de Controle de Folha de Pagamento</footer>
 
 <!-- MODAL CADASTRO/EDIÇÃO -->
 <div class="modal-overlay" id="modalOverlay">
@@ -149,7 +149,7 @@ footer{text-align:center; padding:18px; font-size:12px; color:#8492a3;}
       <div class="form-grid">
         <div class="form-group"><label>Analista</label><input type="text" id="f_ANALISTA"></div>
         <div class="form-group"><label>Apelido</label><input type="text" id="f_APELIDO"></div>
-        <div class="form-group"><label>Empresa *</label><input type="text" id="f_EMPRESA" required></div>
+        <div class="form-group full"><label>Empresa *</label><input type="text" id="f_EMPRESA" required></div>
         <div class="form-group"><label>CNPJ *</label><input type="text" id="f_CNPJ" required></div>
         <div class="form-group">
           <label>Regime Tributário</label>
@@ -188,7 +188,7 @@ footer{text-align:center; padding:18px; font-size:12px; color:#8492a3;}
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-outline" id="btnCancelar">Cancelar</button>
-        <button type="submit" class="btn btn-primary">💾 Salvar</button>
+        <button type="submit" class="btn btn-success">💾 Salvar</button>
       </div>
     </form>
   </div>
@@ -219,44 +219,70 @@ function toast(msg, type){
   setTimeout(() => { el.style.display = 'none'; }, 3800);
 }
 
+// fetch com anti-cache (evita o erro 404 do link temporário do Apps Script)
+// e retry automático em caso de falha transitória.
+async function fetchJson(url, options, retries){
+  retries = retries === undefined ? 1 : retries;
+  const opts = Object.assign({ cache: 'no-store' }, options || {});
+  try {
+    const res = await fetch(url, opts);
+    if(!res.ok) throw new Error('HTTP ' + res.status);
+    const text = await res.text();
+    try{
+      return JSON.parse(text);
+    }catch(parseErr){
+      throw new Error('Resposta inválida do servidor (não é JSON).');
+    }
+  } catch (err) {
+    if (retries > 0) {
+      await new Promise(r => setTimeout(r, 600));
+      return fetchJson(url, options, retries - 1);
+    }
+    throw err;
+  }
+}
+
 async function apiGet(params){
   const url = new URL(API_URL);
   Object.keys(params || {}).forEach(k => url.searchParams.set(k, params[k]));
-  const res = await fetch(url.toString());
-  return res.json();
+  url.searchParams.set('_t', Date.now()); // quebra qualquer cache
+  return fetchJson(url.toString(), { method: 'GET' });
 }
 async function apiPost(payload){
-  const res = await fetch(API_URL, {
+  return fetchJson(API_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
     body: JSON.stringify(payload)
   });
-  return res.json();
 }
 
 async function init(){
   showLoading(true);
   try{
-    const cfg = await apiGet({ action: 'config' });
-    STATE.headers = cfg.headers;
-    STATE.statusCols = cfg.statusCols;
-    STATE.baseCols = cfg.baseCols;
+    // UMA ÚNICA chamada: traz config + meses + dados do mês atual de uma vez.
+    const initRes = await apiGet({ action: 'init' });
+    if(!initRes.success){ throw new Error(initRes.message || 'Falha ao iniciar.'); }
 
-    const monthsRes = await apiGet({ action: 'months' });
-    const months = monthsRes.months || [];
+    STATE.headers = initRes.headers;
+    STATE.statusCols = initRes.statusCols;
+    STATE.baseCols = initRes.baseCols;
+    STATE.month = initRes.month;
+    STATE.rows = (initRes.data && initRes.data.rows) || [];
+
     const select = document.getElementById('monthSelect');
+    const months = initRes.months || [];
     select.innerHTML = months.map(m => `<option value="${m}">${formatMonthLabel(m)}</option>`).join('');
     const current = getCurrentMonthKey();
-    if(!months.includes(current)) {
+    if(!months.includes(current)){
       select.insertAdjacentHTML('beforeend', `<option value="${current}">${formatMonthLabel(current)} (novo)</option>`);
     }
-    select.value = months.includes(current) ? current : (months[months.length-1] || current);
-    STATE.month = select.value;
+    select.value = STATE.month;
 
     buildTableHead();
-    await loadMonthData();
+    renderTable();
+    renderCards();
   }catch(err){
-    toast('Erro ao conectar com a planilha. Verifique a API_URL. ' + err.message, 'error');
+    toast('Erro ao conectar com a planilha: ' + err.message, 'error');
   }
   showLoading(false);
 }
@@ -275,11 +301,12 @@ async function loadMonthData(){
   showLoading(true);
   try{
     const res = await apiGet({ action: 'data', month: STATE.month });
+    if(!res.success) throw new Error(res.message || 'Falha ao carregar dados.');
     STATE.rows = res.data.rows || [];
-    renderTable();
+    renderTable(document.getElementById('searchInput').value);
     renderCards();
   }catch(err){
-    toast('Erro ao carregar dados do mês.', 'error');
+    toast('Erro ao carregar dados do mês: ' + err.message, 'error');
   }
   showLoading(false);
 }
@@ -438,7 +465,7 @@ document.getElementById('companyForm').addEventListener('submit', async (e) => {
       toast(res.message || 'Erro ao salvar.', 'error');
     }
   }catch(err){
-    toast('Erro de conexão ao salvar empresa.', 'error');
+    toast('Erro de conexão ao salvar empresa: ' + err.message, 'error');
   }
   showLoading(false);
 });
@@ -455,7 +482,7 @@ async function confirmDelete(rowIndex, nome){
       toast(res.message || 'Erro ao excluir.', 'error');
     }
   }catch(err){
-    toast('Erro de conexão ao excluir.', 'error');
+    toast('Erro de conexão ao excluir: ' + err.message, 'error');
   }
   showLoading(false);
 }
@@ -473,7 +500,7 @@ document.getElementById('btnDuplicar').addEventListener('click', async () => {
       toast(res.message || 'Não foi possível duplicar.', 'error');
     }
   }catch(err){
-    toast('Erro de conexão ao duplicar mês.', 'error');
+    toast('Erro de conexão ao duplicar mês: ' + err.message, 'error');
   }
   showLoading(false);
 });
@@ -498,7 +525,7 @@ document.getElementById('btnNovoMes').addEventListener('click', async () => {
       toast(res.message, 'error');
     }
   }catch(err){
-    toast('Erro de conexão ao criar mês.', 'error');
+    toast('Erro de conexão ao criar mês: ' + err.message, 'error');
   }
   showLoading(false);
 });
